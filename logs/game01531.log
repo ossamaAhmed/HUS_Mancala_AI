@@ -1,0 +1,36 @@
+# Server version 0.08 running on 192.168.0.14:8179
+# Game ID: 1531
+# Board class: hus.HusBoard
+# Timeout: 2000
+# First Move Timeout: 30000
+# Date: Wed Mar 30 01:45:46 EDT 2016
+# Player 1: Player-0, '260549558', running on localhost
+# Player 2: Player-1, 'RandomHusPlayer', running on localhost
+START Player-0 260549558
+START Player-1 RandomHusPlayer
+PIT 0 2
+PIT 1 23
+PIT 0 23
+PIT 1 2
+PIT 0 17
+PIT 1 18
+PIT 0 18
+PIT 1 20
+PIT 0 21
+PIT 1 8
+PIT 0 0
+PIT 1 21
+PIT 0 1
+PIT 1 10
+PIT 0 3
+PIT 1 24
+PIT 0 4
+PIT 1 13
+PIT 0 2
+PIT 1 25
+PIT 0 14
+PIT 1 21
+PIT 0 5
+PIT 1 1
+GAMEOVER WINNER 1
+# Game ended: Wed Mar 30 01:45:49 EDT 2016

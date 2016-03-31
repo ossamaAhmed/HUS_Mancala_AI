@@ -1,6 +1,8 @@
 package autoplay;
 
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 //Author: Lilly Tong, Eric Crawford
 //
@@ -50,9 +52,78 @@ public class Autoplay
             ProcessBuilder client2_pb = new ProcessBuilder(
                 "java", "-cp", "bin", "-Xms520m", "-Xmx520m", "boardgame.Client", "hus.RandomHusPlayer");
             client2_pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+            
+//          writer.println("2 -2 -1 1 -1 1");
 
             for (int i=0; i < n_games; i++) {
-                System.out.println("Game "+i);
+//            	for(int i1=-10;i1<20;i1++){
+//            		for(int i2=-10;i2<20;i2++){
+//            			for(int i3=-10;i3<20;i3++){
+//            				for(int i4=-10;i4<20;i4++){
+//            					for(int i5=-10;i5<20;i5++){
+//            						for(int i6=-10;i6<20;i6++){
+//                	            		
+//            			                System.out.println("Game "+i);
+//            			                PrintWriter writer = new PrintWriter("../evaluation_function_weights.txt", "UTF-8");
+//            			                writer.println(i1+" "+i2+" "+i3+" "+i4+" "+i5+" "+i6);
+//            			                writer.close();
+//            			                writer = new PrintWriter(new FileWriter("../results.txt", true));
+//            							writer.print(i1+","+i2+","+i3+","+i4+","+i5+","+i6);
+//            			                writer.close();
+//            			
+//            			                try {
+//            			                    Thread.sleep(500);
+//            			                } catch(InterruptedException ex) {
+//            			                    Thread.currentThread().interrupt();
+//            			                }
+//            			
+//            			                Process client1 = ((i % 2 == 0) ? client1_pb.start() : client2_pb.start());
+//            			
+//            			                try {
+//            			                    Thread.sleep(500);
+//            			                } catch(InterruptedException ex) {
+//            			                    Thread.currentThread().interrupt();
+//            			                }
+//            			
+//            			                Process client2 = ((i % 2 == 0) ? client2_pb.start() : client1_pb.start());
+//            			
+//            			                try{
+//            			                    client1.waitFor();
+//            			                } catch (InterruptedException e) {
+//            			                    e.printStackTrace();
+//            			                }
+//            			
+//            			                try{
+//            			                    client2.waitFor();
+//            			                } catch (InterruptedException e) {
+//            			                    e.printStackTrace();
+//            			                }
+//            							
+//            			                try {
+//            			                    Thread.sleep(500);
+//            			                } catch(InterruptedException ex) {
+//            			                    Thread.currentThread().interrupt();
+//            			                }
+//            							
+//            							
+//            							
+//            							
+//            							
+//                	            	}
+//            	            	}
+//                        	}
+//                    	}
+//                	}
+//            	}
+            	
+            	String strategy="2 -2 -1 1 -1 1";
+//                System.out.println("Game "+i);
+//                PrintWriter writer = new PrintWriter("../evaluation_function_weights.txt", "UTF-8");
+//                writer.println(strategy);
+//                writer.close();
+            	PrintWriter writer = new PrintWriter(new FileWriter("../results.txt", true));
+				writer.print(strategy);
+                writer.close();
 
                 try {
                     Thread.sleep(500);

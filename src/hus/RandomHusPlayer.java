@@ -27,6 +27,29 @@ public class RandomHusPlayer extends HusPlayer {
     
     public HusMove chooseMove(HusBoardState board_state)
     {
+    	Random rand = new Random();
+
+    	int  n = rand.nextInt(10) + 1;
+    	if(11>n){
+    		return chooseOptimalMove(board_state);
+    	}
+    	else{
+    		 return chooseOptimalMove(board_state);
+    	}
+    }
+    
+   
+    
+  public HusMove chooseRandomMove(HusBoardState board_state)
+  {
+      // Pick a random move from the set of legal moves.
+      ArrayList<HusMove> moves = board_state.getLegalMoves();
+      HusMove move = moves.get(rand.nextInt(moves.size()));
+      return move;
+  }
+    
+    public HusMove chooseOptimalMove(HusBoardState board_state)
+    {
     	int v= (int)Double.NEGATIVE_INFINITY;
     	HusMove chosenMove=null;
     	ArrayList<HusMove> moves = board_state.getLegalMoves();
@@ -38,26 +61,6 @@ public class RandomHusPlayer extends HusPlayer {
     		}
     	}
     	return chosenMove;
-//        // Get the contents of the pits so we can use it to make decisions.
-//        int[][] pits = board_state.getPits();
-//
-//        // Use ``player_id`` and ``opponent_id`` to get my pits and opponent pits.
-//        int[] my_pits = pits[player_id];
-//        int[] op_pits = pits[opponent_id];
-//
-//        // Use code stored in ``mytools`` package.
-//        MyTools.getSomething();
-//
-//        // Get the legal moves for the current board state.
-//        ArrayList<HusMove> moves = board_state.getLegalMoves();
-//        HusMove move = moves.get(0);
-//
-//        // We can see the effects of a move like this...
-//        HusBoardState cloned_board_state = (HusBoardState) board_state.clone();
-//        cloned_board_state.move(move);
-//
-//        // But since this is a placeholder algorithm, we won't act on that information.
-//        return move;
     }
     
     public int maxValue (HusBoardState board_state, int depth, int current_depth){
@@ -103,7 +106,7 @@ public class RandomHusPlayer extends HusPlayer {
     	int differenceInSeeds= scores[0]- scores[1];
     	int opponentOneOrZeroPits= scores[3]+scores[5];
     	int myOneOrZeroPits = scores[2]+scores[4];
-    	return (2*differenceInSeeds)+(0*(opponentOneOrZeroPits-myOneOrZeroPits));
+    	return (2*differenceInSeeds)+(1*(opponentOneOrZeroPits-myOneOrZeroPits));
 //    	return (2*numberOfPitsScore(board_state))+(op_score-my_score);
     }
     

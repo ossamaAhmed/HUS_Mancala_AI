@@ -1,0 +1,36 @@
+# Server version 0.08 running on 192.168.0.14:8159
+# Game ID: 763
+# Board class: hus.HusBoard
+# Timeout: 2000
+# First Move Timeout: 30000
+# Date: Tue Mar 29 23:53:46 EDT 2016
+# Player 1: Player-0, '260549558', running on localhost
+# Player 2: Player-1, 'RandomHusPlayer', running on localhost
+START Player-0 260549558
+START Player-1 RandomHusPlayer
+PIT 0 3
+PIT 1 21
+PIT 0 2
+PIT 1 5
+PIT 0 21
+PIT 1 11
+PIT 0 12
+PIT 1 9
+PIT 0 0
+PIT 1 27
+PIT 0 22
+PIT 1 16
+PIT 0 3
+PIT 1 15
+PIT 0 28
+PIT 1 2
+PIT 0 31
+PIT 1 21
+PIT 0 0
+PIT 1 18
+PIT 0 9
+PIT 1 10
+PIT 0 30
+PIT 1 1
+GAMEOVER WINNER 1
+# Game ended: Tue Mar 29 23:53:49 EDT 2016

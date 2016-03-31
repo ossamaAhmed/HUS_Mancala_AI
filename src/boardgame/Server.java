@@ -1,9 +1,14 @@
 package boardgame;
 
-import java.io.BufferedReader; import java.io.File; import java.io.FileOutputStream;
+import java.io.BufferedReader; import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -49,7 +54,7 @@ import java.awt.EventQueue;
  */
 public class Server implements Runnable {
     protected static final String VERSION = "0.08";
-    protected static final int DEFAULT_PORT = 8132;
+    protected static final int DEFAULT_PORT = 8185;
 
     public static final int DEFAULT_TIMEOUT = 2000;
     private static final int DEFAULT_TIMEOUT_CUSHION = 4000;
@@ -415,6 +420,44 @@ public class Server implements Runnable {
 
                 if( board.getWinner() != Board.NOBODY ){
                     endGame("");
+                    System.out.println(board.getTurnNumber());
+                    if(board.getWinner()==0){
+                    	try {
+    						PrintWriter writer;
+    						writer = new PrintWriter(new FileWriter("../results.txt", true));
+    						writer.print(" "+board.getTurnNumber()+"\n");
+    		                writer.close();
+    					} catch (FileNotFoundException e) {
+    						// TODO Auto-generated catch block
+    						e.printStackTrace();
+    					} catch (UnsupportedEncodingException e) {
+    						// TODO Auto-generated catch block
+    						e.printStackTrace();
+    					} catch (IOException e) {
+    						// TODO Auto-generated catch block
+    						e.printStackTrace();
+    					}
+                    }
+                    else{
+                    	try {
+    						PrintWriter writer;
+    						writer = new PrintWriter(new FileWriter("../results.txt", true));
+    						writer.print(" -"+board.getTurnNumber()+"\n");
+    		                writer.close();
+    					} catch (FileNotFoundException e) {
+    						// TODO Auto-generated catch block
+    						e.printStackTrace();
+    					} catch (UnsupportedEncodingException e) {
+    						// TODO Auto-generated catch block
+    						e.printStackTrace();
+    					} catch (IOException e) {
+    						// TODO Auto-generated catch block
+    						e.printStackTrace();
+    					}
+                    	
+                    }
+					
+                  
                 }else if(!playingHistory){
                     requestMove(board.getTurnPlayer());
                 }

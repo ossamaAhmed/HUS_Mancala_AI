@@ -1,0 +1,26 @@
+# Server version 0.08 running on web006221.wireless.mcgill.ca:8185
+# Game ID: 2160
+# Board class: hus.HusBoard
+# Timeout: 2000
+# First Move Timeout: 30000
+# Date: Thu Mar 31 14:48:56 EDT 2016
+# Player 1: Player-0, '260549558', running on localhost
+# Player 2: Player-1, 'RandomHusPlayer', running on localhost
+START Player-0 260549558
+START Player-1 RandomHusPlayer
+PIT 0 0
+PIT 1 20
+PIT 0 1
+PIT 1 7
+PIT 0 9
+PIT 1 13
+PIT 0 3
+PIT 1 27
+PIT 0 10
+PIT 1 29
+PIT 0 19
+PIT 1 10
+PIT 0 22
+PIT 1 20
+GAMEOVER WINNER 1
+# Game ended: Thu Mar 31 14:48:58 EDT 2016
