@@ -1,0 +1,31 @@
+# Server version 0.08 running on 192.168.0.14:8197
+# Game ID: 4006
+# Board class: hus.HusBoard
+# Timeout: 2000
+# First Move Timeout: 30000
+# Date: Fri Apr 01 00:07:46 EDT 2016
+# Player 1: Player-0, '260549558', running on localhost
+# Player 2: Player-1, 'RandomHusPlayer', running on localhost
+START Player-0 260549558
+START Player-1 RandomHusPlayer
+PIT 0 22
+PIT 1 18
+PIT 0 21
+PIT 1 5
+PIT 0 24
+PIT 1 11
+PIT 0 17
+PIT 1 19
+PIT 0 13
+PIT 1 2
+PIT 0 29
+PIT 1 1
+PIT 0 11
+PIT 1 6
+PIT 0 1
+PIT 1 0
+PIT 0 13
+PIT 1 22
+PIT 0 0
+GAMEOVER WINNER 0
+# Game ended: Fri Apr 01 00:07:48 EDT 2016

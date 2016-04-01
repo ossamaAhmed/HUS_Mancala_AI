@@ -30,11 +30,11 @@ public class RandomHusPlayer extends HusPlayer {
     	Random rand = new Random();
 
     	int  n = rand.nextInt(10) + 1;
-    	if(11>n){
+    	if(5>n){
     		return chooseOptimalMove(board_state);
     	}
     	else{
-    		 return chooseOptimalMove(board_state);
+    		 return chooseRandomMove(board_state);
     	}
     }
     

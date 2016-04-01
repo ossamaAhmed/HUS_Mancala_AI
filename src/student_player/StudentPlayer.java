@@ -5,11 +5,14 @@ import hus.HusPlayer;
 import hus.HusMove;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -18,11 +21,10 @@ import student_player.mytools.MyTools;
 /** A Hus player submitted by a student. */
 public class StudentPlayer extends HusPlayer {
 
-	private Hashtable<HusBoardState,Integer> transpositionTable; //not sure if we are allowed to use hash tables
-	private boolean saveStateScores;
 	private double[] weights;
-	private double finalBoardScore;
-	private double[] previousWeights;
+	private ArrayList<Double>gameMovesPreformed;
+	private ArrayList<double[]>movesFeatures;
+	private PrintWriter writer;
     /** You must modify this constructor to return your student number.
      * This is important, because this is what the code that runs the
      * competition uses to associate you with your agent.
@@ -35,10 +37,36 @@ public class StudentPlayer extends HusPlayer {
      * for another example agent. */
     public HusMove chooseMove(HusBoardState board_state)
     {
-    	
     	if(board_state.getTurnNumber()==0){
-    		transpositionTable= new Hashtable<HusBoardState,Integer>();
-    		saveStateScores= true;
+    		
+    		gameMovesPreformed= new ArrayList<Double>();
+    		movesFeatures=new ArrayList<double[]>();
+    		try {
+				FileReader in;
+				File f = new File("../learning.txt");
+				in = new FileReader(f);
+				BufferedReader br = new BufferedReader(in);
+				 String line = br.readLine();
+				 String [] myTokens;
+				 while(line!=null){
+					 myTokens= line.split(" ");
+									
+					 gameMovesPreformed.add(Double.parseDouble(myTokens[0]));
+					 double[] myFeatures= new double[myTokens.length-1];
+					 for(int i=0;i<myTokens.length-1;i++){ 
+						 myFeatures[i] =Double.parseDouble(myTokens[i+1]); 
+						 movesFeatures.add(myFeatures);
+					 }
+					 line = br.readLine();	
+				 }
+		    	 in.close();
+		    	
+		    	 System.out.println(f.delete());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 			try {
 				FileReader in;
 				in = new FileReader("../evaluation_function_weights.txt");
@@ -55,69 +83,77 @@ public class StudentPlayer extends HusPlayer {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-    	}
-    	else{
-    		String strategy=weights[0]+" "+weights[1]+" "+weights[2]+" "+weights[3]+" "+weights[4]+" "+weights[5];
-    		PrintWriter writer;
-			try {
-				writer = new PrintWriter("../evaluation_function_weights.txt", "UTF-8");
-				writer.println(strategy);
-	            writer.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    		saveStateScores= false;
+			 learnWeights();
+			 gameMovesPreformed.clear();
+			 movesFeatures.clear();
+			 String strategy=weights[0]+"";
+			 for(int i=1;i< weights.length;i++){
+				 strategy=strategy+" "+weights[i];
+			 }
+	    	   PrintWriter writer;
+				try {
+					writer = new PrintWriter("../evaluation_function_weights.txt", "UTF-8");
+					writer.println(strategy);
+		            writer.close();
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
     	}
     	double v= Double.NEGATIVE_INFINITY;
     	HusMove chosenMove=null;
-    	double temp= Double.NEGATIVE_INFINITY;
     	ArrayList<HusMove> moves = board_state.getLegalMoves();
     	for (HusMove move : moves){
-    		temp=  minValue (moveResult(board_state, move),5,0,(int)Double.NEGATIVE_INFINITY, (int)Double.POSITIVE_INFINITY);
+    		double temp=  minValue (moveResult(board_state, move),5,0,(int)Double.NEGATIVE_INFINITY, (int)Double.POSITIVE_INFINITY);
     		if(v < temp){
     			v= temp;
     			chosenMove= move;
     		}
     	}
-    	System.out.println("I chose to go with a move that has a utility of : "+boardUtility(moveResult(board_state, chosenMove)));
-    	if(board_state.getTurnNumber()==0){
-    		finalBoardScore= temp;
-    		previousWeights = numberOfPitsScore (board_state);
-    	}
-    	else{
-    		learnWeights(moveResult(board_state, chosenMove),board_state, temp);
-    	}
+    	double[] myFeatures= numberOfPitsScore(board_state);
+//    	System.out.println("I chose to go with a move that has a utility of : "+boardUtility(moveResult(board_state, chosenMove)));
+    	try {
+    		
+			writer = new PrintWriter(new FileWriter("../learning.txt", true));
+			String printLine=v+"";
+			 for(int i=0;i< weights.length;i++){
+				 printLine=printLine+" "+myFeatures[i];
+			 }
+			writer.println(printLine);
+            writer.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+    	gameMovesPreformed.add(v);
+    	movesFeatures.add(myFeatures);
+//    	printMovesSoFar();
     	return chosenMove;
-//        // Get the contents of the pits so we can use it to make decisions.
-//        int[][] pits = board_state.getPits();
-//
-//        // Use ``player_id`` and ``opponent_id`` to get my pits and opponent pits.
-//        int[] my_pits = pits[player_id];
-//        int[] op_pits = pits[opponent_id];
-//
-//        // Use code stored in ``mytools`` package.
-//        MyTools.getSomething();
-//
-//        // Get the legal moves for the current board state.
-//        ArrayList<HusMove> moves = board_state.getLegalMoves();
-//        HusMove move = moves.get(0);
-//
-//        // We can see the effects of a move like this...
-//        HusBoardState cloned_board_state = (HusBoardState) board_state.clone();
-//        cloned_board_state.move(move);
-//
-//        // But since this is a placeholder algorithm, we won't act on that information.
-//        return move;
     }
     
     public double maxValue (HusBoardState board_state, int depth, int current_depth, double alpha, double beta){
     	current_depth++;
     	if (board_state.gameOver()) {
-    		return 2*boardUtility(board_state);
+    		if(board_state.getWinner()==player_id){
+    			return 1;
+    		}
+    		else if (board_state.getWinner()==opponent_id){
+    			return -1;
+    		}
+    		else{
+    			return 0;
+    		}
+    		
     	}
     	else if( depth==current_depth){
     		return boardUtility(board_state);
@@ -139,8 +175,17 @@ public class StudentPlayer extends HusPlayer {
     
     public double minValue (HusBoardState board_state, int depth, int current_depth,double alpha, double beta){
     	current_depth++;
+    	
     	if (board_state.gameOver()) {
-    		return 2*boardUtility(board_state);
+    		if(board_state.getWinner()==player_id){
+    			return 1;
+    		}
+    		else if (board_state.getWinner()==opponent_id){
+    			return -1;
+    		}
+    		else{
+    			return 0;
+    		}
     	}
     	else if( depth==current_depth){
     		return boardUtility(board_state);
@@ -167,13 +212,13 @@ public class StudentPlayer extends HusPlayer {
         cloned_board_state.move(move);
         return cloned_board_state;
     }
-    public int boardUtility (HusBoardState board_state){
+    public double boardUtility (HusBoardState board_state){
     	double [] scores = numberOfPitsScore(board_state);
     	int evalFunction=0;
     	for(int i=0;i< weights.length;i++){
     		evalFunction+=(weights[i]*scores[i]);
     	}
-    	return evalFunction;
+    	return Math.tanh(0.0005*evalFunction);
 //    	int differenceInSeeds= scores[0]- scores[1];
 //    	int opponentOneOrZeroPits= scores[3]+scores[5];
 //    	int myOneOrZeroPits = scores[2]+scores[4];
@@ -183,7 +228,7 @@ public class StudentPlayer extends HusPlayer {
     
     
     public double[] numberOfPitsScore (HusBoardState board_state){
-    	double [] scores= new double[6]; //first place my pits score, opp score, my empty, opp emty, my 1's, opp 1's
+    	double [] scores= new double[70]; //first place my pits score, opp score, my empty, opp emty, my 1's, opp 1's
     	int [][] pits = board_state.getPits();
     	int[] my_pits = pits[player_id];
         int[] op_pits = pits[opponent_id];
@@ -206,26 +251,40 @@ public class StudentPlayer extends HusPlayer {
         	}
         	scores[1]=scores[1]+pit;
         }
+        for(int i=6;i<38;i++){
+        	scores[i]=my_pits[i-6];
+        }
+        for(int i=38;i<scores.length;i++){
+        	scores[i]=op_pits[i-38];
+        }
         return scores;
-//    	return (my_score-op_score);
     }
     
-    public void learnWeights(HusBoardState board_state, HusBoardState pboard_state, double cuurentEval){
-//    	double ytp1= boardUtility (board_state);
-    	double ytp1= cuurentEval;
-//    	double yt =boardUtility (pboard_state) ;
-    	double yt= finalBoardScore;
-//    	double yt =172;
-    	double [] currentFeatures= numberOfPitsScore (pboard_state);
-    	double alpha = 0.0000011;
-    	double coeff= alpha*(ytp1-yt);
-    	for(int i=0;i< weights.length;i++){
-    		if(currentFeatures[i]!=0){
-    			weights[i]+=coeff*(currentFeatures[i]);
-    		}
+    public void learnWeights(){
+    	double [] tDValues= new double[this.gameMovesPreformed.size()-1];
+    	double alpha = 0.00011;
+    	for(int i=0; i<this.gameMovesPreformed.size()-1;i++){
+    		tDValues[i]= this.gameMovesPreformed.get(i+1)- this.gameMovesPreformed.get(i);
+        	for(int j=0; j<this.weights.length;j++){
+        		if(tDValues[i]<0){
+        		weights[j]+=(alpha*tDValues[i])*this.movesFeatures.get(i)[j];
+        		}
+        		else{
+        			weights[j]+=(0.005*alpha*tDValues[i])*this.movesFeatures.get(i)[j];
+        		}
+        	}
     	}
-    	finalBoardScore= cuurentEval;
-//    	yt= ytp1;
-//    	previousWeights= numberOfPitsScore (board_state);
+
+    	
     }
+    public void printMovesSoFar(){
+    	for(int i=0; i< this.gameMovesPreformed.size();i++){
+    		System.out.println("move number "+i+" had u equals "+gameMovesPreformed.get(i));
+    	}
+    }
+    private static double sigmoid(double x)
+    {
+        return 1 / (1 + Math.exp(-x));
+    }
+    
 }
