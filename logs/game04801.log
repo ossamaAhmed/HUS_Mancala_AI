@@ -1,0 +1,32 @@
+# Server version 0.08 running on 192.168.0.14:8223
+# Game ID: 4801
+# Board class: hus.HusBoard
+# Timeout: 2000
+# First Move Timeout: 30000
+# Date: Fri Apr 01 01:15:47 EDT 2016
+# Player 1: Player-0, '260549558', running on localhost
+# Player 2: Player-1, 'RandomHusPlayer', running on localhost
+START Player-0 260549558
+START Player-1 RandomHusPlayer
+PIT 0 0
+PIT 1 20
+PIT 0 18
+PIT 1 21
+PIT 0 16
+PIT 1 10
+PIT 0 24
+PIT 1 2
+PIT 0 7
+PIT 1 17
+PIT 0 19
+PIT 1 18
+PIT 0 31
+PIT 1 25
+PIT 0 29
+PIT 1 20
+PIT 0 15
+PIT 1 7
+PIT 0 12
+PIT 1 17
+GAMEOVER WINNER 1
+# Game ended: Fri Apr 01 01:15:55 EDT 2016

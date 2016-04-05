@@ -401,4 +401,17 @@ public class HusBoardState extends BoardState{
 
         return sb.toString();
     }
+    public boolean isEqual(double[][] pits, int player_id, int opponent_id){
+    	for(int i=0; i<this.board[player_id].length;i++){
+    			if(pits[0][i]!= board[player_id][i]){
+    				return false;
+    			}
+    	}
+    	for(int i=0; i<this.board[opponent_id].length;i++){
+			if(pits[1][i]!= board[opponent_id][i]){
+				return false;
+			}
+    	}
+    	return true;
+    }
 }

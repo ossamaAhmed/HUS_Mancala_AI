@@ -8,3 +8,4 @@
 # Player 2: Player-1, '260549558', running on localhost
 START Player-0 RandomHusPlayer
 START Player-1 260549558
+GAMEOVER TIMEOUT WINNER 1

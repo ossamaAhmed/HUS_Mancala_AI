@@ -1,0 +1,40 @@
+# Server version 0.08 running on wpa146044.wireless.mcgill.ca:8265
+# Game ID: 7352
+# Board class: hus.HusBoard
+# Timeout: 2000
+# First Move Timeout: 30000
+# Date: Mon Apr 04 14:04:59 EDT 2016
+# Player 1: Player-0, '260549558', running on localhost
+# Player 2: Player-1, 'RandomHusPlayer', running on localhost
+START Player-0 260549558
+START Player-1 RandomHusPlayer
+PIT 0 22
+PIT 1 22
+PIT 0 17
+PIT 1 12
+PIT 0 18
+PIT 1 18
+PIT 0 11
+PIT 1 24
+PIT 0 3
+PIT 1 23
+PIT 0 15
+PIT 1 27
+PIT 0 4
+PIT 1 8
+PIT 0 10
+PIT 1 20
+PIT 0 12
+PIT 1 27
+PIT 0 22
+PIT 1 26
+PIT 0 23
+PIT 1 25
+PIT 0 27
+PIT 1 12
+PIT 0 21
+PIT 1 14
+PIT 0 28
+PIT 1 0
+GAMEOVER WINNER 1
+# Game ended: Mon Apr 04 14:05:02 EDT 2016

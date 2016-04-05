@@ -1,0 +1,11 @@
+# Server version 0.08 running on wpa146035.wireless.mcgill.ca:8180
+# Game ID: 7779
+# Board class: hus.HusBoard
+# Timeout: 2000
+# First Move Timeout: 30000
+# Date: Mon Apr 04 16:58:52 EDT 2016
+# Player 1: Player-0, '260549558', running on localhost
+# Player 2: Player-1, 'RandomHusPlayer', running on localhost
+START Player-0 260549558
+START Player-1 RandomHusPlayer
+PIT 0 21

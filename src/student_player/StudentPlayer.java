@@ -15,16 +15,23 @@ import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Random;
 
 import student_player.mytools.MyTools;
 
 /** A Hus player submitted by a student. */
 public class StudentPlayer extends HusPlayer {
 
+	Random rand = new Random();
 	private double[] weights;
 	private ArrayList<Double>gameMovesPreformed;
 	private ArrayList<double[]>movesFeatures;
+	private ArrayList<Boolean>isRandom;
+	private  Hashtable<int[][],Double> Qfuncs;
 	private PrintWriter writer;
+	private int depth=5;
+	private long maxTime;
+	private long startTime;
     /** You must modify this constructor to return your student number.
      * This is important, because this is what the code that runs the
      * competition uses to associate you with your agent.
@@ -37,10 +44,63 @@ public class StudentPlayer extends HusPlayer {
      * for another example agent. */
     public HusMove chooseMove(HusBoardState board_state)
     {
+    	maxTime =(long) 1.98 * 1000;
+    	startTime = System.currentTimeMillis();
+    	Random rand = new Random();
+    	if(board_state.getTurnNumber()==0){
+    		return chooseOptimalMove(board_state);
+    	}
+    	else{
+	    	int  n = rand.nextInt(10) + 1;
+	    	if(11>n){
+	    		return chooseOptimalMove(board_state);
+	    	}
+	    	else{
+	    		 return chooseRandomMove(board_state);
+	    	}
+    	}
+    }
+    
+   
+    
+  public HusMove chooseRandomMove(HusBoardState board_state)
+  {
+      // Pick a random move from the set of legal moves.
+      ArrayList<HusMove> moves = board_state.getLegalMoves();
+      HusMove move = moves.get(rand.nextInt(moves.size()));
+      double v= minValue (moveResult(board_state, move),depth,0,(int)Double.NEGATIVE_INFINITY, (int)Double.POSITIVE_INFINITY);
+      double[] myFeatures= numberOfPitsScore(board_state);
+      try {
+  		
+			writer = new PrintWriter(new FileWriter("../learning.txt", true));
+			String printLine=v+" "+"true";
+			 for(int i=0;i< weights.length;i++){
+				 printLine=printLine+" "+myFeatures[i];
+			 }
+			writer.println(printLine);
+          writer.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+  	isRandom.add(true);
+  	gameMovesPreformed.add(v);
+  	movesFeatures.add(myFeatures);
+      return move;
+  }
+    public HusMove chooseOptimalMove(HusBoardState board_state)
+    {
     	if(board_state.getTurnNumber()==0){
     		
     		gameMovesPreformed= new ArrayList<Double>();
     		movesFeatures=new ArrayList<double[]>();
+    		isRandom= new ArrayList<Boolean>();
     		try {
 				FileReader in;
 				File f = new File("../learning.txt");
@@ -50,11 +110,11 @@ public class StudentPlayer extends HusPlayer {
 				 String [] myTokens;
 				 while(line!=null){
 					 myTokens= line.split(" ");
-									
 					 gameMovesPreformed.add(Double.parseDouble(myTokens[0]));
-					 double[] myFeatures= new double[myTokens.length-1];
-					 for(int i=0;i<myTokens.length-1;i++){ 
-						 myFeatures[i] =Double.parseDouble(myTokens[i+1]); 
+					 isRandom.add(Boolean.parseBoolean(myTokens[1]));
+					 double[] myFeatures= new double[myTokens.length-2];
+					 for(int i=0;i<myTokens.length-2;i++){ 
+						 myFeatures[i] =Double.parseDouble(myTokens[i+2]); 
 						 movesFeatures.add(myFeatures);
 					 }
 					 line = br.readLine();	
@@ -86,6 +146,7 @@ public class StudentPlayer extends HusPlayer {
 			 learnWeights();
 			 gameMovesPreformed.clear();
 			 movesFeatures.clear();
+			 isRandom.clear();
 			 String strategy=weights[0]+"";
 			 for(int i=1;i< weights.length;i++){
 				 strategy=strategy+" "+weights[i];
@@ -106,19 +167,28 @@ public class StudentPlayer extends HusPlayer {
     	double v= Double.NEGATIVE_INFINITY;
     	HusMove chosenMove=null;
     	ArrayList<HusMove> moves = board_state.getLegalMoves();
+    for (int iterDepth=5;iterDepth<6;iterDepth++){
+    	if(System.currentTimeMillis() > startTime + maxTime){
+    		break;
+    	}
     	for (HusMove move : moves){
-    		double temp=  minValue (moveResult(board_state, move),5,0,(int)Double.NEGATIVE_INFINITY, (int)Double.POSITIVE_INFINITY);
+    		double temp=  minValue (moveResult(board_state, move),iterDepth,0,(int)Double.NEGATIVE_INFINITY, (int)Double.POSITIVE_INFINITY);
     		if(v < temp){
     			v= temp;
     			chosenMove= move;
     		}
+    		if(System.currentTimeMillis() > startTime + maxTime){
+    			break;
+    		}
     	}
+    }
+    	
     	double[] myFeatures= numberOfPitsScore(board_state);
 //    	System.out.println("I chose to go with a move that has a utility of : "+boardUtility(moveResult(board_state, chosenMove)));
     	try {
     		
 			writer = new PrintWriter(new FileWriter("../learning.txt", true));
-			String printLine=v+"";
+			String printLine=v+" "+"false";
 			 for(int i=0;i< weights.length;i++){
 				 printLine=printLine+" "+myFeatures[i];
 			 }
@@ -135,6 +205,7 @@ public class StudentPlayer extends HusPlayer {
 			e.printStackTrace();
 		}
 		
+    	isRandom.add(false);
     	gameMovesPreformed.add(v);
     	movesFeatures.add(myFeatures);
 //    	printMovesSoFar();
@@ -155,11 +226,12 @@ public class StudentPlayer extends HusPlayer {
     		}
     		
     	}
-    	else if( depth==current_depth){
-    		return boardUtility(board_state);
+    	else if( depth==current_depth || System.currentTimeMillis() > startTime + maxTime){
+    		return boardUtility(board_state, current_depth);
     	}
     	double v= Double.NEGATIVE_INFINITY;
     	ArrayList<HusMove> moves = board_state.getLegalMoves();
+
     	for (HusMove move : moves){
     		double temp=  minValue (moveResult(board_state, move),depth,current_depth,alpha,beta);
     		if(v < temp){
@@ -169,6 +241,9 @@ public class StudentPlayer extends HusPlayer {
     			return v;
     		}
     		alpha=Math.max(alpha, v);
+    		if(System.currentTimeMillis() > startTime + maxTime){
+    			break;
+    		}
     	}
     	return v;
     } 
@@ -187,8 +262,8 @@ public class StudentPlayer extends HusPlayer {
     			return 0;
     		}
     	}
-    	else if( depth==current_depth){
-    		return boardUtility(board_state);
+    	else if( depth==current_depth || System.currentTimeMillis() > startTime + maxTime){
+    		return boardUtility(board_state, current_depth);
     	}
     	double v= Double.POSITIVE_INFINITY;
     	ArrayList<HusMove> moves = board_state.getLegalMoves();
@@ -201,6 +276,9 @@ public class StudentPlayer extends HusPlayer {
     			return v;
     		}
     		beta=Math.min(beta, v);
+    		if(System.currentTimeMillis() > startTime + maxTime){
+    			break;
+    		}
     	}
     	
     	return v;
@@ -212,13 +290,13 @@ public class StudentPlayer extends HusPlayer {
         cloned_board_state.move(move);
         return cloned_board_state;
     }
-    public double boardUtility (HusBoardState board_state){
+    public double boardUtility (HusBoardState board_state, int current_depth){
     	double [] scores = numberOfPitsScore(board_state);
     	int evalFunction=0;
     	for(int i=0;i< weights.length;i++){
     		evalFunction+=(weights[i]*scores[i]);
     	}
-    	return Math.tanh(0.0005*evalFunction);
+    	return Math.tanh(0.005*evalFunction*(1.0/(double)current_depth));
 //    	int differenceInSeeds= scores[0]- scores[1];
 //    	int opponentOneOrZeroPits= scores[3]+scores[5];
 //    	int myOneOrZeroPits = scores[2]+scores[4];
@@ -262,17 +340,23 @@ public class StudentPlayer extends HusPlayer {
     
     public void learnWeights(){
     	double [] tDValues= new double[this.gameMovesPreformed.size()-1];
-    	double alpha = 0.00011;
+    	double alpha = 0.0011;
     	for(int i=0; i<this.gameMovesPreformed.size()-1;i++){
-    		tDValues[i]= this.gameMovesPreformed.get(i+1)- this.gameMovesPreformed.get(i);
-        	for(int j=0; j<this.weights.length;j++){
-        		if(tDValues[i]<0){
-        		weights[j]+=(alpha*tDValues[i])*this.movesFeatures.get(i)[j];
-        		}
-        		else{
-        			weights[j]+=(0.005*alpha*tDValues[i])*this.movesFeatures.get(i)[j];
-        		}
-        	}
+    		//if not random i+1
+    		if(this.isRandom.get(i+1)==false){
+		    		tDValues[i]= this.gameMovesPreformed.get(i+1)- this.gameMovesPreformed.get(i);
+		        	for(int j=0; j<this.weights.length;j++){
+		        		if(tDValues[i]<0 && weights[j]>0){
+		        		weights[j]+=(alpha*tDValues[i])*this.movesFeatures.get(i)[j];
+		        		}
+		        		else if(tDValues[i]>0 && weights[j]<0){
+		        			weights[j]+=(alpha*tDValues[i])*this.movesFeatures.get(i)[j];
+		        		}
+		        	}
+    		}
+    		else{
+    			System.out.println(this.isRandom.get(i+1));
+    		}
     	}
 
     	
@@ -282,8 +366,7 @@ public class StudentPlayer extends HusPlayer {
     		System.out.println("move number "+i+" had u equals "+gameMovesPreformed.get(i));
     	}
     }
-    private static double sigmoid(double x)
-    {
+    private static double sigmoid(double x){
         return 1 / (1 + Math.exp(-x));
     }
     

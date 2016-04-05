@@ -1,0 +1,10 @@
+# Server version 0.08 running on localhost:8244
+# Game ID: 5920
+# Board class: hus.HusBoard
+# Timeout: 2000
+# First Move Timeout: 30000
+# Date: Sat Apr 02 16:08:41 EDT 2016
+# Player 1: Player-0, 'RandomHusPlayer', running on localhost
+# Player 2: Player-1, '260549558', running on localhost
+START Player-0 RandomHusPlayer
+START Player-1 260549558

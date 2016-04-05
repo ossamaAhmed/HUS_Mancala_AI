@@ -116,20 +116,20 @@ public class Autoplay
 //                	}
 //            	}
             	
-            	String strategy="2 -2 -1 1 -1 1";
-//                System.out.println("Game "+i);
+//            	String strategy="2 -2 -1 1 -1 1";
+                System.out.println("Game "+i);
 //                PrintWriter writer = new PrintWriter("../evaluation_function_weights.txt", "UTF-8");
 //                writer.println(strategy);
 //                writer.close();
-            	PrintWriter writer = new PrintWriter(new FileWriter("../results.txt", true));
-				writer.print(strategy);
-                writer.close();
-
-                try {
-                    Thread.sleep(500);
-                } catch(InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                }
+//            	PrintWriter writer = new PrintWriter(new FileWriter("../results.txt", true));
+//				writer.print(strategy);
+//                writer.close();
+//
+//                try {
+//                    Thread.sleep(500);
+//                } catch(InterruptedException ex) {
+//                    Thread.currentThread().interrupt();
+//                }
 
                 Process client1 = ((i % 2 == 0) ? client1_pb.start() : client2_pb.start());
 
