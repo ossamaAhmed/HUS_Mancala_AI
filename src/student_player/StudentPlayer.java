@@ -68,7 +68,7 @@ public class StudentPlayer extends HusPlayer {
       // Pick a random move from the set of legal moves.
       ArrayList<HusMove> moves = board_state.getLegalMoves();
       HusMove move = moves.get(rand.nextInt(moves.size()));
-      double v= minValue (moveResult(board_state, move),depth,0,(int)Double.NEGATIVE_INFINITY, (int)Double.POSITIVE_INFINITY);
+      double v= minValue (moveResult(board_state, move),6,0,(int)Double.NEGATIVE_INFINITY, (int)Double.POSITIVE_INFINITY);
       double[] myFeatures= numberOfPitsScore(board_state);
       try {
   		
@@ -143,7 +143,7 @@ public class StudentPlayer extends HusPlayer {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			 learnWeights();
+//			 learnWeights();
 			 gameMovesPreformed.clear();
 			 movesFeatures.clear();
 			 isRandom.clear();
@@ -167,7 +167,7 @@ public class StudentPlayer extends HusPlayer {
     	double v= Double.NEGATIVE_INFINITY;
     	HusMove chosenMove=null;
     	ArrayList<HusMove> moves = board_state.getLegalMoves();
-    	System.out.println("legal moves = "+moves.size());
+    	moves= orderMoves(moves,board_state);
     	if(moves.size()>19){
     		depth=6;
     	}
@@ -242,7 +242,7 @@ public class StudentPlayer extends HusPlayer {
     	}
     	double v= Double.NEGATIVE_INFINITY;
     	ArrayList<HusMove> moves = board_state.getLegalMoves();
-
+//    	moves= orderMoves(moves,board_state);
     	for (HusMove move : moves){
     		double temp=  minValue (moveResult(board_state, move),depth,current_depth,alpha,beta);
     		if(v < temp){
@@ -277,7 +277,9 @@ public class StudentPlayer extends HusPlayer {
     		return boardUtility(board_state, current_depth);
     	}
     	double v= Double.POSITIVE_INFINITY;
+    	
     	ArrayList<HusMove> moves = board_state.getLegalMoves();
+//    	moves= orderMoves(moves,board_state);
     	for (HusMove move : moves){
     		double temp=  maxValue (moveResult(board_state, move),depth,current_depth,alpha,beta);
     		if(v > temp){
@@ -307,7 +309,7 @@ public class StudentPlayer extends HusPlayer {
     	for(int i=0;i< weights.length;i++){
     		evalFunction+=(weights[i]*scores[i]);
     	}
-    	return Math.tanh(0.1*evalFunction*(1.0/((double)current_depth)));
+    	return Math.tanh(0.05*evalFunction*(1.0/((double)current_depth)));
 //    	int differenceInSeeds= scores[0]- scores[1];
 //    	int opponentOneOrZeroPits= scores[3]+scores[5];
 //    	int myOneOrZeroPits = scores[2]+scores[4];
@@ -323,7 +325,7 @@ public class StudentPlayer extends HusPlayer {
           int[] op_pits = pits[opponent_id];
           for(int pit : my_pits){ 
           	if(pit==0) { //pits that have 0
-          		scores[2]=scores[2]+1;
+          		scores[2]++;
           	}
           	else if (pit ==1){ //pits that have 1
           		scores[4]=scores[4]+pit;
@@ -340,17 +342,17 @@ public class StudentPlayer extends HusPlayer {
           
           for(int pit : op_pits){
           	if(pit==0) {
-          		scores[3]=scores[3]+pit;
+          		scores[3]++;
           	}
           	else if (pit ==1){
           		scores[5]=scores[5]+pit;
           	}
-          	scores[1]=scores[1]+pit; //my seeds
+          	scores[1]=scores[1]+pit; //his seeds
           }
-          for(int i=16;i< my_pits.length;i++){
-        	  if(my_pits[i]>1){
+          for(int i=16;i< op_pits.length;i++){
+        	  if(op_pits[i]>1){
         		 scores[8]=scores[8]+1; //pits in the middle used to attack me
-        		 scores[9]= scores[9]+my_pits[i]; //seeds in the middle used to attack me
+        		 scores[9]= scores[9]+op_pits[i]; //seeds in the middle used to attack me
         	  }
           }
           return scores;
