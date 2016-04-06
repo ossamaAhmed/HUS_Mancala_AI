@@ -1,0 +1,16 @@
+# Server version 0.08 running on 192.168.0.10:8304
+# Game ID: 8288
+# Board class: hus.HusBoard
+# Timeout: 2000
+# First Move Timeout: 30000
+# Date: Tue Apr 05 22:06:56 EDT 2016
+# Player 1: Player-0, '260549558', running on localhost
+# Player 2: Player-1, 'RandomHusPlayer', running on localhost
+START Player-0 260549558
+START Player-1 RandomHusPlayer
+PIT 0 18
+PIT 1 13
+PIT 0 9
+PIT 1 11
+GAMEOVER TIMEOUT WINNER 1
+# Game ended: Tue Apr 05 22:07:10 EDT 2016

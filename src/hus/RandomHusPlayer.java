@@ -257,18 +257,25 @@ public class RandomHusPlayer extends HusPlayer {
   
   
   public double[] numberOfPitsScore (HusBoardState board_state){
-  	double [] scores= new double[6]; //first place my pits score, opp score, my empty, opp emty, my 1's, opp 1's
+  	double [] scores= new double[10]; //first place my pits score, opp score, my empty, opp emty, my 1's, opp 1's
   	int [][] pits = board_state.getPits();
   	int[] my_pits = pits[player_id];
       int[] op_pits = pits[opponent_id];
-      for(int pit : my_pits){
-      	if(pit==0) {
-      		scores[2]=scores[2]+pit;
+      for(int pit : my_pits){ 
+      	if(pit==0) { //pits that have 0
+      		scores[2]=scores[2]+1;
       	}
-      	else if (pit ==1){
+      	else if (pit ==1){ //pits that have 1
       		scores[4]=scores[4]+pit;
       	}
-      	scores[0]=scores[0]+pit;
+      	scores[0]=scores[0]+pit; // my seeds
+      }
+      
+      for(int i=16;i< my_pits.length;i++){
+    	  if(my_pits[i]>1){
+    		 scores[6]=scores[6]+1; //pits in the middle used to attack
+    		 scores[7]= scores[7]+my_pits[i]; //seeds in the middle used to attack 
+    	  }
       }
       
       for(int pit : op_pits){
@@ -278,7 +285,13 @@ public class RandomHusPlayer extends HusPlayer {
       	else if (pit ==1){
       		scores[5]=scores[5]+pit;
       	}
-      	scores[1]=scores[1]+pit;
+      	scores[1]=scores[1]+pit; //my seeds
+      }
+      for(int i=16;i< my_pits.length;i++){
+    	  if(my_pits[i]>1){
+    		 scores[8]=scores[8]+1; //pits in the middle used to attack me
+    		 scores[9]= scores[9]+my_pits[i]; //seeds in the middle used to attack me
+    	  }
       }
       return scores;
   }

@@ -1,0 +1,15 @@
+# Server version 0.08 running on web006206.wireless.mcgill.ca:8123
+# Game ID: 8146
+# Board class: hus.HusBoard
+# Timeout: 300000
+# First Move Timeout: 30000
+# Date: Tue Apr 05 14:56:50 EDT 2016
+# Player 1: Player-0, '260549558', running on web006206.wireless.mcgill.ca
+# Player 2: Player-1, '260553379', running on wpa050237.wireless.mcgill.ca
+START Player-0 260549558
+START Player-1 260553379
+PIT 0 18
+PIT 1 8
+PIT 0 16
+GAMEOVER ILLEGAL MOVE: Player 1 plays pit 8 WINNER 0
+# Game ended: Tue Apr 05 14:56:51 EDT 2016

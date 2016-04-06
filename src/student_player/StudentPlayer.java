@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Random;
 
@@ -27,9 +28,8 @@ public class StudentPlayer extends HusPlayer {
 	private ArrayList<Double>gameMovesPreformed;
 	private ArrayList<double[]>movesFeatures;
 	private ArrayList<Boolean>isRandom;
-	private  Hashtable<int[][],Double> Qfuncs;
 	private PrintWriter writer;
-	private int depth=5;
+	private int depth;
 	private long maxTime;
 	private long startTime;
     /** You must modify this constructor to return your student number.
@@ -44,7 +44,7 @@ public class StudentPlayer extends HusPlayer {
      * for another example agent. */
     public HusMove chooseMove(HusBoardState board_state)
     {
-    	maxTime =(long) 1.98 * 1000;
+    	maxTime =(long) 1.995 * 1000;
     	startTime = System.currentTimeMillis();
     	Random rand = new Random();
     	if(board_state.getTurnNumber()==0){
@@ -97,7 +97,7 @@ public class StudentPlayer extends HusPlayer {
     public HusMove chooseOptimalMove(HusBoardState board_state)
     {
     	if(board_state.getTurnNumber()==0){
-    		
+    		maxTime =(long) 29.5 * 1000;
     		gameMovesPreformed= new ArrayList<Double>();
     		movesFeatures=new ArrayList<double[]>();
     		isRandom= new ArrayList<Boolean>();
@@ -167,12 +167,24 @@ public class StudentPlayer extends HusPlayer {
     	double v= Double.NEGATIVE_INFINITY;
     	HusMove chosenMove=null;
     	ArrayList<HusMove> moves = board_state.getLegalMoves();
-    for (int iterDepth=5;iterDepth<6;iterDepth++){
-    	if(System.currentTimeMillis() > startTime + maxTime){
-    		break;
+    	System.out.println("legal moves = "+moves.size());
+    	if(moves.size()>19){
+    		depth=6;
+    	}
+    	else if(moves.size()>18){
+    		depth=6;
+    	}
+    	else if (moves.size()>8){
+    		depth=7;
+    	}
+    	else if (moves.size()>5){
+    		depth=8;
+    	}
+    	else{
+    		depth=6;
     	}
     	for (HusMove move : moves){
-    		double temp=  minValue (moveResult(board_state, move),iterDepth,0,(int)Double.NEGATIVE_INFINITY, (int)Double.POSITIVE_INFINITY);
+    		double temp=  minValue (moveResult(board_state, move),depth,0,(int)Double.NEGATIVE_INFINITY, (int)Double.POSITIVE_INFINITY);
     		if(v < temp){
     			v= temp;
     			chosenMove= move;
@@ -181,7 +193,6 @@ public class StudentPlayer extends HusPlayer {
     			break;
     		}
     	}
-    }
     	
     	double[] myFeatures= numberOfPitsScore(board_state);
 //    	System.out.println("I chose to go with a move that has a utility of : "+boardUtility(moveResult(board_state, chosenMove)));
@@ -226,7 +237,7 @@ public class StudentPlayer extends HusPlayer {
     		}
     		
     	}
-    	else if( depth==current_depth || System.currentTimeMillis() > startTime + maxTime){
+    	else if( depth==current_depth || System.currentTimeMillis() > startTime + maxTime){//
     		return boardUtility(board_state, current_depth);
     	}
     	double v= Double.NEGATIVE_INFINITY;
@@ -262,7 +273,7 @@ public class StudentPlayer extends HusPlayer {
     			return 0;
     		}
     	}
-    	else if( depth==current_depth || System.currentTimeMillis() > startTime + maxTime){
+    	else if( depth==current_depth || System.currentTimeMillis() > startTime + maxTime){ //
     		return boardUtility(board_state, current_depth);
     	}
     	double v= Double.POSITIVE_INFINITY;
@@ -296,7 +307,7 @@ public class StudentPlayer extends HusPlayer {
     	for(int i=0;i< weights.length;i++){
     		evalFunction+=(weights[i]*scores[i]);
     	}
-    	return Math.tanh(0.005*evalFunction*(1.0/(double)current_depth));
+    	return Math.tanh(0.1*evalFunction*(1.0/((double)current_depth)));
 //    	int differenceInSeeds= scores[0]- scores[1];
 //    	int opponentOneOrZeroPits= scores[3]+scores[5];
 //    	int myOneOrZeroPits = scores[2]+scores[4];
@@ -306,51 +317,58 @@ public class StudentPlayer extends HusPlayer {
     
     
     public double[] numberOfPitsScore (HusBoardState board_state){
-    	double [] scores= new double[70]; //first place my pits score, opp score, my empty, opp emty, my 1's, opp 1's
-    	int [][] pits = board_state.getPits();
-    	int[] my_pits = pits[player_id];
-        int[] op_pits = pits[opponent_id];
-        for(int pit : my_pits){
-        	if(pit==0) {
-        		scores[2]=scores[2]+pit;
-        	}
-        	else if (pit ==1){
-        		scores[4]=scores[4]+pit;
-        	}
-        	scores[0]=scores[0]+pit;
-        }
-        
-        for(int pit : op_pits){
-        	if(pit==0) {
-        		scores[3]=scores[3]+pit;
-        	}
-        	else if (pit ==1){
-        		scores[5]=scores[5]+pit;
-        	}
-        	scores[1]=scores[1]+pit;
-        }
-        for(int i=6;i<38;i++){
-        	scores[i]=my_pits[i-6];
-        }
-        for(int i=38;i<scores.length;i++){
-        	scores[i]=op_pits[i-38];
-        }
-        return scores;
+     	double [] scores= new double[10]; //first place my pits score, opp score, my empty, opp emty, my 1's, opp 1's
+      	int [][] pits = board_state.getPits();
+      	int[] my_pits = pits[player_id];
+          int[] op_pits = pits[opponent_id];
+          for(int pit : my_pits){ 
+          	if(pit==0) { //pits that have 0
+          		scores[2]=scores[2]+1;
+          	}
+          	else if (pit ==1){ //pits that have 1
+          		scores[4]=scores[4]+pit;
+          	}
+          	scores[0]=scores[0]+pit; // my seeds
+          }
+          
+          for(int i=16;i< my_pits.length;i++){
+        	  if(my_pits[i]>1){
+        		 scores[6]=scores[6]+1; //pits in the middle used to attack
+        		 scores[7]= scores[7]+my_pits[i]; //seeds in the middle used to attack 
+        	  }
+          }
+          
+          for(int pit : op_pits){
+          	if(pit==0) {
+          		scores[3]=scores[3]+pit;
+          	}
+          	else if (pit ==1){
+          		scores[5]=scores[5]+pit;
+          	}
+          	scores[1]=scores[1]+pit; //my seeds
+          }
+          for(int i=16;i< my_pits.length;i++){
+        	  if(my_pits[i]>1){
+        		 scores[8]=scores[8]+1; //pits in the middle used to attack me
+        		 scores[9]= scores[9]+my_pits[i]; //seeds in the middle used to attack me
+        	  }
+          }
+          return scores;
     }
     
     public void learnWeights(){
     	double [] tDValues= new double[this.gameMovesPreformed.size()-1];
-    	double alpha = 0.0011;
-    	for(int i=0; i<this.gameMovesPreformed.size()-1;i++){
+    	double alpha = 0.00011;
+    	for(int i=this.gameMovesPreformed.size()-2; i>=0;i--){
     		//if not random i+1
     		if(this.isRandom.get(i+1)==false){
 		    		tDValues[i]= this.gameMovesPreformed.get(i+1)- this.gameMovesPreformed.get(i);
 		        	for(int j=0; j<this.weights.length;j++){
-		        		if(tDValues[i]<0 && weights[j]>0){
+		        		if(tDValues[i]<0){
 		        		weights[j]+=(alpha*tDValues[i])*this.movesFeatures.get(i)[j];
 		        		}
-		        		else if(tDValues[i]>0 && weights[j]<0){
-		        			weights[j]+=(alpha*tDValues[i])*this.movesFeatures.get(i)[j];
+		        		else{
+		        			weights[j]+=0.05*(alpha*tDValues[i])*this.movesFeatures.get(i)[j];
 		        		}
 		        	}
     		}
@@ -368,6 +386,19 @@ public class StudentPlayer extends HusPlayer {
     }
     private static double sigmoid(double x){
         return 1 / (1 + Math.exp(-x));
+    }
+    
+    public ArrayList<HusMove> orderMoves(ArrayList<HusMove> myMoves, HusBoardState board_state){
+    	for(int i=0;i<myMoves.size()-1;i++){
+    		for(int j=i+1;j<myMoves.size();j++){
+    			double evalI= boardUtility(moveResult(board_state, myMoves.get(i)),1);
+    			double evalJ= boardUtility(moveResult(board_state, myMoves.get(j)),1);
+    			if(evalJ>evalI){
+    				Collections.swap(myMoves, i, j);
+    			}
+    		}
+    	}
+    	return myMoves;
     }
     
 }
