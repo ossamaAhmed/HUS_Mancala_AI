@@ -243,8 +243,9 @@ public class StudentPlayer extends HusPlayer {
     	double v= Double.NEGATIVE_INFINITY;
     	ArrayList<HusMove> moves = board_state.getLegalMoves();
 //    	moves= orderMoves(moves,board_state);
-    	for (HusMove move : moves){
-    		double temp=  minValue (moveResult(board_state, move),depth,current_depth,alpha,beta);
+    	while(!moves.isEmpty()){
+    		int chose = rand.nextInt(moves.size());
+    		double temp=  minValue (moveResult(board_state, moves.get(chose)),depth,current_depth,alpha,beta);
     		if(v < temp){
     			v= temp;
     		}
@@ -255,6 +256,7 @@ public class StudentPlayer extends HusPlayer {
     		if(System.currentTimeMillis() > startTime + maxTime){
     			break;
     		}
+    		moves.remove(chose);
     	}
     	return v;
     } 
@@ -280,8 +282,9 @@ public class StudentPlayer extends HusPlayer {
     	
     	ArrayList<HusMove> moves = board_state.getLegalMoves();
 //    	moves= orderMoves(moves,board_state);
-    	for (HusMove move : moves){
-    		double temp=  maxValue (moveResult(board_state, move),depth,current_depth,alpha,beta);
+    	while(!moves.isEmpty()){
+    		int chose = rand.nextInt(moves.size());
+    		double temp=  maxValue (moveResult(board_state, moves.get(chose)),depth,current_depth,alpha,beta);
     		if(v > temp){
     			v= temp;
     		}
@@ -292,6 +295,7 @@ public class StudentPlayer extends HusPlayer {
     		if(System.currentTimeMillis() > startTime + maxTime){
     			break;
     		}
+    		moves.remove(chose);
     	}
     	
     	return v;
